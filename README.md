@@ -1,8 +1,8 @@
 # About
 ## simple opengl project that includes:
-two buttons that brighten up upon being clicked. 
-Counter for how many clicked buttons
-Keyboard detection
+two buttons that brighten up upon being clicked.  
+Counter for how many clicked buttons  
+Keyboard detection  
 
 ___
 
