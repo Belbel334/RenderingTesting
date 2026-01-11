@@ -87,11 +87,16 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
       }
     }else cout << "none"<<endl;
     cout<<BatteryDrain<<endl;
+  }
 }
+void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
-
 int main()
 {
+
+  glfwSetErrorCallback(error_callback);
   glfwInit();
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
