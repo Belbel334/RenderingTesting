@@ -89,10 +89,17 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     cout<<BatteryDrain<<endl;
   }
 }
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+  cout<<"pressed sum shit or sumn idk" << endl;
+}
+
 void error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
+
+
 int main()
 {
 
@@ -113,6 +120,7 @@ int main()
   glfwMakeContextCurrent(window);
 
   glfwSetMouseButtonCallback(window, mouse_button_callback);
+  glfwSetKeyCallback(window, key_callback);
 
   gladLoadGL();
   glViewport(0, 0, 800, 800);
