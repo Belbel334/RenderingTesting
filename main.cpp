@@ -34,7 +34,7 @@ float colorL[3]={ 0.1f, 0.1f, 0.8f };
 float colorR[3]  = { 0.8f, 0.1f, 0.1f };
 bool LeftOn=false;
 bool RightOn=false;
-int BatteryDrain=0;
+int buttonsOn=0;
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -57,14 +57,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         colorL[0]=0.9f;
         colorL[1]=0.9f;
         colorL[2]=1.0f;
-        BatteryDrain++;
+        buttonsOn++;
 
       }else{
         LeftOn=!LeftOn;
         colorL[0]=0.1f;
         colorL[1]=0.1f;
         colorL[2]=0.8f;
-        BatteryDrain-=1;
+        buttonsOn-=1;
       }
     }
     // recht
@@ -76,22 +76,26 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         colorR[0]=1.0f;
         colorR[1]=0.9f;
         colorR[2]=0.9f;
-        BatteryDrain++;
+        buttonsOn++;
 
       }else{
         RightOn=!RightOn;
         colorR[0]=0.8f;
         colorR[1]=0.1f;
         colorR[2]=0.1f;
-        BatteryDrain-=1;
+        buttonsOn-=1;
       }
     }else cout << "none"<<endl;
-    cout<<BatteryDrain<<endl;
+    cout<<buttonsOn<<endl;
   }
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-  cout<<"pressed sum shit or sumn idk" << endl;
+  if(action==GLFW_PRESS){
+    cout<<"pressed sum shit or sumn idk" << endl;
+  } else if(action==GLFW_RELEASE){
+    cout<<"let da key go or sumn idk" << endl;
+  }
 }
 
 void error_callback(int error, const char* description)
