@@ -1,7 +1,7 @@
 #ifndef EBO_CLASS_H
 #define EBO_CLASS_H
 
-#include"include/glad/glad.h"
+#include"glad/glad.h"
 
 class EBO
 {

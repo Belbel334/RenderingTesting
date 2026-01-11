@@ -1,7 +1,7 @@
 #include<iostream>
 #include <cmath>
-#include "include/glad/glad.h"
-#include "include/GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include"shaderClass.h"
 #include"VAO.h"
@@ -129,7 +129,7 @@ int main()
   gladLoadGL();
   glViewport(0, 0, 800, 800);
 
-  Shader shaderProgram("default.vert", "default.frag");
+  Shader shaderProgram("shaders/default.vert", "shaders/default.frag");
 
   VAO VAO1;
   VAO1.Bind();
