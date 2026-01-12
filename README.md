@@ -8,7 +8,6 @@ ___
 
 # compiling
 
-## linux
 
 ### out file
 
@@ -23,6 +22,4 @@ x86_64-w64-mingw32-g++ main.cpp glad.c shaderClass.cpp VAO.cpp VBO.cpp EBO.cpp -
   -L./lib-mingw-w64 \
   -lglfw3 -lopengl32 -lgdi32 -static
 
-## windows
 
-figure it out 

@@ -35,6 +35,7 @@ float colorR[3]  = { 0.8f, 0.1f, 0.1f };
 bool LeftOn=false;
 bool RightOn=false;
 int buttonsOn=0;
+int pos[2]= {0,0};
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -92,7 +93,18 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
   if(action==GLFW_PRESS){
+    if(key==GLFW_KEY_W){
+      pos[0]++;
+      vertices[0]+=0.1f;
+    }else if(key==GLFW_KEY_S){
+      pos[0]-=1;
+    } else if(key==GLFW_KEY_A){
+      pos[1]-=1;
+    }else if(key==GLFW_KEY_D){
+      pos[1]++;
+    }
     cout<<"pressed sum shit or sumn idk" << endl;
+    cout << pos[0] << ","<< pos[1]<< endl;
   } else if(action==GLFW_RELEASE){
     cout<<"let da key go or sumn idk" << endl;
   }
