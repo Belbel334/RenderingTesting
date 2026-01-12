@@ -10,25 +10,26 @@
 
 using namespace std;
 
+GLfloat xpositions[]={
+  0.25f, -0.25f, 0.25f, -0.25f,
+};
+
+GLfloat ypositions[]={
+  -0.25f, -0.25f,0.25f,0.25f,
+};
+
 GLfloat vertices[] = {
+  xpositions[0], ypositions[0], 0.0f, //0
+  xpositions[1], ypositions[1], 0.0f,//1
+  xpositions[2], ypositions[2], 0.0f, //2
+  xpositions[3], ypositions[3], 0.0f, //3
 
-  0.25f, -0.25f,0.0f, //0
-  -0.25f, -0.25f,0.0f,//1
-  0.25f, 0.25f, 0.0f, //2
-  -0.25f, 0.25f, 0.0f, //3
-
-  0.55f, -0.25f,0.0f, //4
-  0.30f, -0.25f, 0.0f, //5
-  0.55f, 0.25f, 0.0f, //6
-  0.30f, 0.25f, 0.0f //7
 };
 
 GLuint indices[] = {
   0,1,2,
   2,3,1,
 
-  4,5,6,
-  6,7,5
 };
 float colorL[3]={ 0.1f, 0.1f, 0.8f };
 float colorR[3]  = { 0.8f, 0.1f, 0.1f };
@@ -94,16 +95,34 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
   if(action==GLFW_PRESS){
     if(key==GLFW_KEY_W){
-      pos[0]++;
-      vertices[0]+=0.1f;
-    }else if(key==GLFW_KEY_S){
-      pos[0]-=1;
-    } else if(key==GLFW_KEY_A){
-      pos[1]-=1;
-    }else if(key==GLFW_KEY_D){
       pos[1]++;
+      for(int i=0; i<sizeof(ypositions);i++){
+        ypositions[i]+=0.1f;
+      } 
+    }else if(key==GLFW_KEY_S){
+      pos[1]-=1;
+      for(int i=0; i<sizeof(ypositions);i++){
+        ypositions[i]-=0.1f;
+      }
+    } else if(key==GLFW_KEY_A){
+      pos[0]-=1;
+      
+
+    }else if(key==GLFW_KEY_D){
+      pos[0]++;
     }
     cout<<"pressed sum shit or sumn idk" << endl;
+    vertices[0] = xpositions[0];
+    vertices[1] = ypositions[0];
+
+    vertices[3] = xpositions[1];
+    vertices[4] = ypositions[1];
+
+    vertices[6] = xpositions[2];
+    vertices[7] = ypositions[2];
+
+    vertices[9] = xpositions[3];
+    vertices[10] = ypositions[3];
     cout << pos[0] << ","<< pos[1]<< endl;
   } else if(action==GLFW_RELEASE){
     cout<<"let da key go or sumn idk" << endl;
@@ -112,7 +131,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void error_callback(int error, const char* description)
 {
-    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+  fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
 
@@ -160,13 +179,17 @@ int main()
   {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    shaderProgram.Activate();
 
+
+
+    VBO1.Bind();
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+    VBO1.Unbind();
+
+    shaderProgram.Activate();
     glUniform3f(colorLLoc, colorL[0], colorL[1], colorL[2]);
     glUniform3f(colorRLoc, colorR[0], colorR[1], colorR[2]);
-
     VAO1.Bind();
-
     glDrawElements(GL_TRIANGLES, 10000, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(window);
     glfwPollEvents();
