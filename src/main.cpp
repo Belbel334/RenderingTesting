@@ -1,66 +1,72 @@
-#include<iostream>
-#include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
+#include <cmath>
 
-#include"shaderClass.h"
-#include"VAO.h"
-#include"VBO.h"
-#include"EBO.h"
+
+#include "EBO.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "shaderClass.h"
 
 using namespace std;
 
-GLfloat xpositions[]={
-  0.10f, -0.10f, 0.10f, -0.10f,
+GLfloat xpositions[] = {
+    0.10f,
+    -0.10f,
+    0.10f,
+    -0.10f,
 };
 
-GLfloat ypositions[]={
-  -0.10f, -0.10f,0.10f,0.10f,
+GLfloat ypositions[] = {
+    -0.10f,
+    -0.10f,
+    0.10f,
+    0.10f,
 };
 
 GLfloat vertices[] = {
-  xpositions[0], ypositions[0], 0.0f, //0
-  xpositions[1], ypositions[1], 0.0f,//1
-  xpositions[2], ypositions[2], 0.0f, //2
-  xpositions[3], ypositions[3], 0.0f, //3
+    xpositions[0], ypositions[0], 0.0f, // 0
+    xpositions[1], ypositions[1], 0.0f, // 1
+    xpositions[2], ypositions[2], 0.0f, // 2
+    xpositions[3], ypositions[3], 0.0f, // 3
 
 };
 
 GLuint indices[] = {
-  0,1,2,
-  2,3,1,
+    0, 1, 2, 2, 3, 1,
 
 };
-float colorL[3]={ 0.1f, 0.1f, 0.8f };
-float colorR[3]  = { 0.8f, 0.1f, 0.1f };
-bool LeftOn=false;
-bool RightOn=false;
-int buttonsOn=0;
+float colorL[3] = {0.1f, 0.1f, 0.8f};
+float colorR[3] = {0.8f, 0.1f, 0.1f};
+bool LeftOn = false;
+bool RightOn = false;
+int buttonsOn = 0;
 
-void updatePos(){
-  if(xpositions[0]>=1.0f){
-    xpositions[0]=1.0f;
-    xpositions[1]=0.8f;
-    xpositions[2]=1.0f;
-    xpositions[3]=0.8f;
+void updatePos() {
+  if (xpositions[0] >= 1.0f) {
+    xpositions[0] = 1.0f;
+    xpositions[1] = 0.8f;
+    xpositions[2] = 1.0f;
+    xpositions[3] = 0.8f;
   }
-  if(xpositions[1]<=-1.0f){
-    xpositions[0]=-0.8f;
-    xpositions[1]=-1.0f;
-    xpositions[2]=-0.8f;
-    xpositions[3]=-1.0f;
+  if (xpositions[1] <= -1.0f) {
+    xpositions[0] = -0.8f;
+    xpositions[1] = -1.0f;
+    xpositions[2] = -0.8f;
+    xpositions[3] = -1.0f;
   }
-  if(ypositions[0]<=-1.0f){
-    ypositions[0]=-1.0f;
-    ypositions[1]=-1.0f;
-    ypositions[2]=-0.8f;
-    ypositions[3]=-0.8f;
+  if (ypositions[0] <= -1.0f) {
+    ypositions[0] = -1.0f;
+    ypositions[1] = -1.0f;
+    ypositions[2] = -0.8f;
+    ypositions[3] = -0.8f;
   }
-  if(ypositions[2]>=1.0f){
-    ypositions[0]= 0.8f;
-    ypositions[1]= 0.8f;
-    ypositions[2]= 1.0f;
-    ypositions[3]= 1.0f;
+  if (ypositions[2] >= 1.0f) {
+    ypositions[0] = 0.8f;
+    ypositions[1] = 0.8f;
+    ypositions[2] = 1.0f;
+    ypositions[3] = 1.0f;
   }
   vertices[0] = xpositions[0];
   vertices[1] = ypositions[0];
@@ -73,13 +79,11 @@ void updatePos(){
 
   vertices[9] = xpositions[3];
   vertices[10] = ypositions[3];
-  
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-  {
+void mouse_button_callback(GLFWwindow *window, int button, int action,
+                           int mods) {
+  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
 
@@ -89,46 +93,63 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     float x = (2.0f * xpos) / width - 1.0f;
     float y = 1.0f - (2.0f * ypos) / height;
 
-    cout << "pressed"<<endl;
+    cout << "pressed" << endl;
   }
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-  if(action==GLFW_PRESS){
-    if(key==GLFW_KEY_W){
-      for(int i=0; i<4;i++){
-        ypositions[i]+=0.05f;
-      } 
-    }else if(key==GLFW_KEY_S){
-      for(int i=0; i<4;i++){
-        ypositions[i]-=0.05f;
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mods) {
+  if (action == GLFW_PRESS) {
+    if (key == GLFW_KEY_W) {
+      for (int i = 0; i < 4; i++) {
+        ypositions[i] += 0.05f;
       }
-    } else if(key==GLFW_KEY_A){
-      for(int i=0; i<4;i++){
-        xpositions[i]-=0.05f;
+    } else if (key == GLFW_KEY_S) {
+      for (int i = 0; i < 4; i++) {
+        ypositions[i] -= 0.05f;
       }
-    }else if(key==GLFW_KEY_D){
-      for(int i=0; i<4;i++){
+    } else if (key == GLFW_KEY_A) {
+      for (int i = 0; i < 4; i++) {
+        xpositions[i] -= 0.05f;
+      }
+    } else if (key == GLFW_KEY_D) {
+      for (int i = 0; i < 4; i++) {
 
-        xpositions[i]+=0.05f;
+        xpositions[i] += 0.05f;
       }
-
     }
     updatePos();
-    cout<<"pressed sum shit or sumn idk" << endl;
-  } else if(action==GLFW_RELEASE){
-    cout<<"let da key go or sumn idk" << endl;
+    cout << "pressed sum shit or sumn idk" << endl;
+  } else if (action == GLFW_RELEASE) {
+    cout << "let da key go or sumn idk" << endl;
+  } else if (action == GLFW_REPEAT) {
+    cout << "holding" << endl;
+    if (key == GLFW_KEY_W) {
+      for (int i = 0; i < 4; i++) {
+        ypositions[i] += 0.05f;
+      }
+    } else if (key == GLFW_KEY_S) {
+      for (int i = 0; i < 4; i++) {
+        ypositions[i] -= 0.05f;
+      }
+    } else if (key == GLFW_KEY_A) {
+      for (int i = 0; i < 4; i++) {
+        xpositions[i] -= 0.05f;
+      }
+    } else if (key == GLFW_KEY_D) {
+      for (int i = 0; i < 4; i++) {
+        xpositions[i] += 0.05f;
+      }
+    }
+    updatePos();
   }
 }
 
-void error_callback(int error, const char* description)
-{
+void error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-
-int main()
-{
+int main() {
 
   glfwSetErrorCallback(error_callback);
   glfwInit();
@@ -137,9 +158,9 @@ int main()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(800, 800, "Supertofspelletje", NULL, NULL);
-  if (window == NULL)
-  {
+  GLFWwindow *window =
+      glfwCreateWindow(800, 800, "Supertofspelletje", NULL, NULL);
+  if (window == NULL) {
     cout << "kutspelletje" << endl;
     glfwTerminate();
     return -1;
@@ -166,12 +187,9 @@ int main()
   VBO1.Unbind();
   EBO1.Unbind();
   GLuint colorLLoc = glGetUniformLocation(shaderProgram.ID, "colorL");
-  while (!glfwWindowShouldClose(window))
-  {
+  while (!glfwWindowShouldClose(window)) {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
-
 
     VBO1.Bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
