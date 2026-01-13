@@ -37,6 +37,21 @@ bool LeftOn=false;
 bool RightOn=false;
 int buttonsOn=0;
 int pos[2]= {0,0};
+
+void updatePos(){
+  vertices[0] = xpositions[0];
+    vertices[1] = ypositions[0];
+
+    vertices[3] = xpositions[1];
+    vertices[4] = ypositions[1];
+
+    vertices[6] = xpositions[2];
+    vertices[7] = ypositions[2];
+
+    vertices[9] = xpositions[3];
+    vertices[10] = ypositions[3];
+}
+
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -70,25 +85,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
       }
     }
     // recht
-    else if (x >= 0.30f && x <= 0.55f && y >= -0.25f && y <= 0.25f)
-    {
-      cout << "right" << endl;
-      if(!RightOn){
-        RightOn=!RightOn;
-        colorR[0]=1.0f;
-        colorR[1]=0.9f;
-        colorR[2]=0.9f;
-        buttonsOn++;
-
-      }else{
-        RightOn=!RightOn;
-        colorR[0]=0.8f;
-        colorR[1]=0.1f;
-        colorR[2]=0.1f;
-        buttonsOn-=1;
-      }
-    }else cout << "none"<<endl;
-    cout<<buttonsOn<<endl;
+      
   }
 }
 
@@ -106,23 +103,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
       }
     } else if(key==GLFW_KEY_A){
       pos[0]-=1;
-      
-
+      for(int i=0; i<sizeof(xpositions);i++){
+        xpositions[i]-=0.1f;
+      }
     }else if(key==GLFW_KEY_D){
       pos[0]++;
+      for(int i=0; i<sizeof(xpositions);i++){
+        xpositions[i]+=0.1f;
+      }
+      
     }
+    updatePos();
     cout<<"pressed sum shit or sumn idk" << endl;
-    vertices[0] = xpositions[0];
-    vertices[1] = ypositions[0];
-
-    vertices[3] = xpositions[1];
-    vertices[4] = ypositions[1];
-
-    vertices[6] = xpositions[2];
-    vertices[7] = ypositions[2];
-
-    vertices[9] = xpositions[3];
-    vertices[10] = ypositions[3];
     cout << pos[0] << ","<< pos[1]<< endl;
   } else if(action==GLFW_RELEASE){
     cout<<"let da key go or sumn idk" << endl;
