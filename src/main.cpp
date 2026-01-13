@@ -11,11 +11,11 @@
 using namespace std;
 
 GLfloat xpositions[]={
-  0.25f, -0.25f, 0.25f, -0.25f,
+  0.10f, -0.10f, 0.10f, -0.10f,
 };
 
 GLfloat ypositions[]={
-  -0.25f, -0.25f,0.25f,0.25f,
+  -0.10f, -0.10f,0.10f,0.10f,
 };
 
 GLfloat vertices[] = {
@@ -36,20 +36,44 @@ float colorR[3]  = { 0.8f, 0.1f, 0.1f };
 bool LeftOn=false;
 bool RightOn=false;
 int buttonsOn=0;
-int pos[2]= {0,0};
 
 void updatePos(){
+  if(xpositions[0]>=1.0f){
+    xpositions[0]=1.0f;
+    xpositions[1]=0.8f;
+    xpositions[2]=1.0f;
+    xpositions[3]=0.8f;
+  }
+  if(xpositions[1]<=-1.0f){
+    xpositions[0]=-0.8f;
+    xpositions[1]=-1.0f;
+    xpositions[2]=-0.8f;
+    xpositions[3]=-1.0f;
+  }
+  if(ypositions[0]<=-1.0f){
+    ypositions[0]=-1.0f;
+    ypositions[1]=-1.0f;
+    ypositions[2]=-0.8f;
+    ypositions[3]=-0.8f;
+  }
+  if(ypositions[2]>=1.0f){
+    ypositions[0]= 0.8f;
+    ypositions[1]= 0.8f;
+    ypositions[2]= 1.0f;
+    ypositions[3]= 1.0f;
+  }
   vertices[0] = xpositions[0];
-    vertices[1] = ypositions[0];
+  vertices[1] = ypositions[0];
 
-    vertices[3] = xpositions[1];
-    vertices[4] = ypositions[1];
+  vertices[3] = xpositions[1];
+  vertices[4] = ypositions[1];
 
-    vertices[6] = xpositions[2];
-    vertices[7] = ypositions[2];
+  vertices[6] = xpositions[2];
+  vertices[7] = ypositions[2];
 
-    vertices[9] = xpositions[3];
-    vertices[10] = ypositions[3];
+  vertices[9] = xpositions[3];
+  vertices[10] = ypositions[3];
+  
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -65,57 +89,33 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     float x = (2.0f * xpos) / width - 1.0f;
     float y = 1.0f - (2.0f * ypos) / height;
 
-    // links
-    if (x >= -0.25f && x <= 0.25f && y >= -0.25f && y <= 0.25f)
-    {
-      cout << "left" << endl;
-      if(!LeftOn){
-        LeftOn=!LeftOn;
-        colorL[0]=0.9f;
-        colorL[1]=0.9f;
-        colorL[2]=1.0f;
-        buttonsOn++;
-
-      }else{
-        LeftOn=!LeftOn;
-        colorL[0]=0.1f;
-        colorL[1]=0.1f;
-        colorL[2]=0.8f;
-        buttonsOn-=1;
-      }
-    }
-    // recht
-      
+    cout << "pressed"<<endl;
   }
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
   if(action==GLFW_PRESS){
     if(key==GLFW_KEY_W){
-      pos[1]++;
       for(int i=0; i<4;i++){
-        ypositions[i]+=0.1f;
+        ypositions[i]+=0.05f;
       } 
     }else if(key==GLFW_KEY_S){
-      pos[1]-=1;
       for(int i=0; i<4;i++){
-        ypositions[i]-=0.1f;
+        ypositions[i]-=0.05f;
       }
     } else if(key==GLFW_KEY_A){
-      pos[0]-=1;
       for(int i=0; i<4;i++){
-        xpositions[i]-=0.1f;
+        xpositions[i]-=0.05f;
       }
     }else if(key==GLFW_KEY_D){
-      pos[0]++;
       for(int i=0; i<4;i++){
-        xpositions[i]+=0.1f;
+
+        xpositions[i]+=0.05f;
       }
-      
+
     }
     updatePos();
     cout<<"pressed sum shit or sumn idk" << endl;
-    cout << pos[0] << ","<< pos[1]<< endl;
   } else if(action==GLFW_RELEASE){
     cout<<"let da key go or sumn idk" << endl;
   }
@@ -166,7 +166,6 @@ int main()
   VBO1.Unbind();
   EBO1.Unbind();
   GLuint colorLLoc = glGetUniformLocation(shaderProgram.ID, "colorL");
-  GLuint colorRLoc = glGetUniformLocation(shaderProgram.ID, "colorR");
   while (!glfwWindowShouldClose(window))
   {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -180,7 +179,6 @@ int main()
 
     shaderProgram.Activate();
     glUniform3f(colorLLoc, colorL[0], colorL[1], colorL[2]);
-    glUniform3f(colorRLoc, colorR[0], colorR[1], colorR[2]);
     VAO1.Bind();
     glDrawElements(GL_TRIANGLES, 10000, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(window);
