@@ -93,22 +93,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
   if(action==GLFW_PRESS){
     if(key==GLFW_KEY_W){
       pos[1]++;
-      for(int i=0; i<sizeof(ypositions);i++){
+      for(int i=0; i<4;i++){
         ypositions[i]+=0.1f;
       } 
     }else if(key==GLFW_KEY_S){
       pos[1]-=1;
-      for(int i=0; i<sizeof(ypositions);i++){
+      for(int i=0; i<4;i++){
         ypositions[i]-=0.1f;
       }
     } else if(key==GLFW_KEY_A){
       pos[0]-=1;
-      for(int i=0; i<sizeof(xpositions);i++){
+      for(int i=0; i<4;i++){
         xpositions[i]-=0.1f;
       }
     }else if(key==GLFW_KEY_D){
       pos[0]++;
-      for(int i=0; i<sizeof(xpositions);i++){
+      for(int i=0; i<4;i++){
         xpositions[i]+=0.1f;
       }
       
