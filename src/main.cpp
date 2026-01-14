@@ -189,6 +189,7 @@ int main() {
   VAO1.Unbind();
   VBO1.Unbind();
   EBO1.Unbind();
+  cout << "color ID " << shaderProgram.ID << endl;
   GLuint colorLLoc = glGetUniformLocation(shaderProgram.ID, "colorL");
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
