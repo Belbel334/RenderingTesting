@@ -118,6 +118,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
         xpositions[i] += 0.05f;
       }
     }
+
     updatePos();
     cout << "pressed sum shit or sumn idk" << endl;
   } else if (action == GLFW_RELEASE) {
@@ -175,6 +176,8 @@ int main() {
 
   Shader shaderProgram("shaders/default.vert", "shaders/default.frag");
 
+  updatePos();
+
   VAO VAO1;
   VAO1.Bind();
 
@@ -199,6 +202,10 @@ int main() {
     glUniform3f(colorLLoc, colorL[0], colorL[1], colorL[2]);
     VAO1.Bind();
     glDrawElements(GL_TRIANGLES, 10000, GL_UNSIGNED_INT, 0);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+      glfwSetWindowShouldClose(window, true);
+      cout << "quit game"<<endl;
+    }
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

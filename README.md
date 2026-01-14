@@ -1,8 +1,11 @@
 # About
 ## simple opengl project that includes:
-two buttons that brighten up upon being clicked.  
-Counter for how many clicked buttons  
-Keyboard detection  
+
+- Small cube that moves with the WASD keys  
+- Out of bounds protection
+- Keyboard holding 
+- escape key to quit
+
 
 ___
 
