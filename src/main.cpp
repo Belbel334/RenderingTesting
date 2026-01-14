@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include <cmath>
 
 
@@ -10,6 +12,7 @@
 #include "shaderClass.h"
 
 using namespace std;
+using namespace chrono_literals;
 
 GLfloat xpositions[] = {
     0.10f,
@@ -39,9 +42,11 @@ GLuint indices[] = {
 };
 float colorL[3] = {0.1f, 0.1f, 0.8f};
 float colorR[3] = {0.8f, 0.1f, 0.1f};
-bool LeftOn = false;
-bool RightOn = false;
-int buttonsOn = 0;
+
+float Yvel=0.0f;
+float g = -0.001f;
+float bounciness = 0.35f;
+bool grounded = false;
 
 void updatePos() {
   if (xpositions[0] >= 1.0f) {
@@ -61,12 +66,24 @@ void updatePos() {
     ypositions[1] = -1.0f;
     ypositions[2] = -0.8f;
     ypositions[3] = -0.8f;
+    if (Yvel < 0) {
+      Yvel = -Yvel * bounciness;
+      if (abs(Yvel) < 0.001f) {
+        Yvel = 0.0f;
+        grounded = true;
+      }
+    }
+  } else {
+    grounded=false;
   }
   if (ypositions[2] >= 1.0f) {
     ypositions[0] = 0.8f;
     ypositions[1] = 0.8f;
     ypositions[2] = 1.0f;
     ypositions[3] = 1.0f;
+    if(Yvel>0){
+      Yvel=-Yvel*bounciness;
+    }
   }
   vertices[0] = xpositions[0];
   vertices[1] = ypositions[0];
@@ -80,7 +97,17 @@ void updatePos() {
   vertices[9] = xpositions[3];
   vertices[10] = ypositions[3];
 }
-
+void applyGravity() {
+  // Apply gravity acceleration to velocity
+  Yvel += g;
+  //cout << "gravity function, yvel= " << Yvel<<endl;
+  
+  for (int i = 0; i < 4; i++) {
+    ypositions[i] += Yvel;
+  }
+  
+  updatePos();
+}
 void mouse_button_callback(GLFWwindow *window, int button, int action,
                            int mods) {
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -100,19 +127,28 @@ void mouse_button_callback(GLFWwindow *window, int button, int action,
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods) {
   if (action == GLFW_PRESS) {
-    if (key == GLFW_KEY_W) {
-      for (int i = 0; i < 4; i++) {
-        ypositions[i] += 0.05f;
+    if (key == GLFW_KEY_W || key == GLFW_KEY_SPACE || key == GLFW_KEY_UP) {
+      if(grounded){
+        for(float a; a < 0.07f; a+=0.02){
+          for (int i = 0; i < 4; i++) {
+            Yvel=a;
+            applyGravity();
+          }
+        }
+        for (int i = 0; i < 4; i++) {
+          //ypositions[i] += 0.05f;
+          Yvel=g;
+        }
       }
-    } else if (key == GLFW_KEY_S) {
+    } else if (key == GLFW_KEY_S || key==GLFW_KEY_DOWN) {
       for (int i = 0; i < 4; i++) {
-        ypositions[i] -= 0.05f;
+        //ypositions[i] -= 0.05f;
       }
-    } else if (key == GLFW_KEY_A) {
+    } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
       }
-    } else if (key == GLFW_KEY_D) {
+    } else if (key == GLFW_KEY_D||key==GLFW_KEY_RIGHT) {
       for (int i = 0; i < 4; i++) {
 
         xpositions[i] += 0.05f;
@@ -120,31 +156,43 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
     }
 
     updatePos();
-    cout << "pressed sum shit or sumn idk" << endl;
+    //cout << "pressed sum shit or sumn idk" << endl;
   } else if (action == GLFW_RELEASE) {
-    cout << "let da key go or sumn idk" << endl;
+    //cout << "let da key go or sumn idk" << endl;
   } else if (action == GLFW_REPEAT) {
-    cout << "holding" << endl;
-    if (key == GLFW_KEY_W) {
-      for (int i = 0; i < 4; i++) {
-        ypositions[i] += 0.05f;
+    //cout << "holding" << endl;
+    if (key == GLFW_KEY_W || key == GLFW_KEY_SPACE || key == GLFW_KEY_UP) {
+      if(grounded){
+        for(float a; a < 0.07f; a+=0.02){
+          for (int i = 0; i < 4; i++) {
+            Yvel=a;
+            applyGravity();
+          }
+        }
+        for (int i = 0; i < 4; i++) {
+          //ypositions[i] += 0.05f;
+          Yvel=g;
+        }
       }
-    } else if (key == GLFW_KEY_S) {
+
+      else if (key == GLFW_KEY_S || key==GLFW_KEY_DOWN) {
       for (int i = 0; i < 4; i++) {
-        ypositions[i] -= 0.05f;
+        //ypositions[i] -= 0.05f;
       }
-    } else if (key == GLFW_KEY_A) {
+    } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
       }
-    } else if (key == GLFW_KEY_D) {
+    } else if (key == GLFW_KEY_D||key==GLFW_KEY_RIGHT) {
       for (int i = 0; i < 4; i++) {
+
         xpositions[i] += 0.05f;
       }
     }
+
     updatePos();
   }
-}
+}}
 
 void error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -162,7 +210,7 @@ int main() {
   GLFWwindow *window =
       glfwCreateWindow(800, 800, "Supertofspelletje", NULL, NULL);
   if (window == NULL) {
-    cout << "kutspelletje" << endl;
+    cerr << "kutspelletje" << endl;
     glfwTerminate();
     return -1;
   }
@@ -194,6 +242,8 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    applyGravity();
 
     VBO1.Bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
