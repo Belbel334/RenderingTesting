@@ -41,11 +41,10 @@ GLuint indices[] = {
 
 };
 float colorL[3] = {0.1f, 0.1f, 0.8f};
-float colorR[3] = {0.8f, 0.1f, 0.1f};
 
 float Yvel=0.0f;
 float g = -0.001f;
-float bounciness = 0.35f;
+float bounciness = 0.5f;
 bool grounded = false;
 
 void updatePos() {
@@ -129,70 +128,33 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
   if (action == GLFW_PRESS) {
     if (key == GLFW_KEY_W || key == GLFW_KEY_SPACE || key == GLFW_KEY_UP) {
       if(grounded){
-        for(float a; a < 0.07f; a+=0.02){
-          for (int i = 0; i < 4; i++) {
-            Yvel=a;
-            applyGravity();
-          }
-        }
-        for (int i = 0; i < 4; i++) {
-          //ypositions[i] += 0.05f;
-          Yvel=g;
-        }
+        Yvel = 0.03f;  // Simple upward velocity impulse
       }
     } else if (key == GLFW_KEY_S || key==GLFW_KEY_DOWN) {
-      for (int i = 0; i < 4; i++) {
-        //ypositions[i] -= 0.05f;
-      }
+      // Down movement if needed
     } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
       }
     } else if (key == GLFW_KEY_D||key==GLFW_KEY_RIGHT) {
       for (int i = 0; i < 4; i++) {
-
         xpositions[i] += 0.05f;
       }
     }
-
     updatePos();
-    //cout << "pressed sum shit or sumn idk" << endl;
-  } else if (action == GLFW_RELEASE) {
-    //cout << "let da key go or sumn idk" << endl;
   } else if (action == GLFW_REPEAT) {
-    //cout << "holding" << endl;
-    if (key == GLFW_KEY_W || key == GLFW_KEY_SPACE || key == GLFW_KEY_UP) {
-      if(grounded){
-        for(float a; a < 0.07f; a+=0.02){
-          for (int i = 0; i < 4; i++) {
-            Yvel=a;
-            applyGravity();
-          }
-        }
-        for (int i = 0; i < 4; i++) {
-          //ypositions[i] += 0.05f;
-          Yvel=g;
-        }
-      }
-
-      else if (key == GLFW_KEY_S || key==GLFW_KEY_DOWN) {
-      for (int i = 0; i < 4; i++) {
-        //ypositions[i] -= 0.05f;
-      }
-    } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
+    if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
       }
     } else if (key == GLFW_KEY_D||key==GLFW_KEY_RIGHT) {
       for (int i = 0; i < 4; i++) {
-
         xpositions[i] += 0.05f;
       }
     }
-
     updatePos();
   }
-}}
+}
 
 void error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
