@@ -1,4 +1,5 @@
 #include <glad/glad.h>
+#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <chrono>
@@ -40,6 +41,45 @@ GLuint indices[] = {
     0, 1, 2, 2, 3, 1,
 
 };
+
+const int WorldGridSize=50;
+const int vertCount = (WorldGridSize+1)*(WorldGridSize+1)*3;
+const int indCount=WorldGridSize*WorldGridSize*6;
+
+GLfloat worldVertices[vertCount];
+GLuint worldIndices[indCount];
+
+void Genworld(){
+  int vertexIndex=0;
+  float Cellsize=0.5f/WorldGridSize;
+
+  for(int row=0; row<=WorldGridSize; row++){
+    for(int col=0; col<=WorldGridSize;col++){
+      worldVertices[vertexIndex+2]=-1.0f+col*Cellsize;
+      worldVertices[vertexIndex]=-1.0f+row*Cellsize;  
+
+      int White=(row+col)%2;
+      worldVertices[vertexIndex++]=White ? 1.0f : 0.0f;
+    }
+  }
+  int indexPos = 0;
+  for (int row = 0; row < WorldGridSize; row++) {
+    for (int col = 0; col < WorldGridSize; col++) {
+      int topLeft = row * (WorldGridSize + 1) + col;
+      int topRight = topLeft + 1;
+      int bottomLeft = (row + 1) * (WorldGridSize + 1) + col;
+      int bottomRight = bottomLeft + 1;
+      
+      worldIndices[indexPos++] = topLeft;
+      worldIndices[indexPos++] = bottomLeft;
+      worldIndices[indexPos++] = topRight;
+      
+      worldIndices[indexPos++] = topRight;
+      worldIndices[indexPos++] = bottomLeft;
+      worldIndices[indexPos++] = bottomRight;
+    }
+  }
+}
 float colorL[3] = {0.1f, 0.1f, 0.8f};
 
 float Yvel=0.0f;
@@ -184,6 +224,8 @@ int main() {
   gladLoadGL();
   glViewport(0, 0, 800, 800);
 
+  Genworld();
+
   Shader shaderProgram("shaders/default.vert", "shaders/default.frag");
 
   updatePos();
@@ -199,6 +241,15 @@ int main() {
   VAO1.Unbind();
   VBO1.Unbind();
   EBO1.Unbind();
+
+  VAO worldVAO;
+  worldVAO.Bind();
+  VBO worldVBO(worldVertices, sizeof(worldVertices));
+  EBO worldEBO(worldIndices, sizeof(worldIndices));
+  worldVAO.LinkVBO(worldVBO, 0);
+  worldVAO.Unbind();
+  worldVBO.Unbind();
+  worldEBO.Unbind();
   cout << "color ID " << shaderProgram.ID << endl;
   GLuint colorLLoc = glGetUniformLocation(shaderProgram.ID, "colorL");
   while (!glfwWindowShouldClose(window)) {
@@ -206,6 +257,11 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     applyGravity();
+
+    glUniform3f(colorLLoc, 0.2f, 0.7f, 0.3f);
+    worldVAO.Bind();
+    glDrawElements(GL_TRIANGLES, 1000000, GL_UNSIGNED_INT, 0);
+    worldVAO.Unbind();
 
     VBO1.Bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
@@ -226,6 +282,9 @@ int main() {
   VAO1.Delete();
   VBO1.Delete();
   EBO1.Delete();
+  worldVAO.Delete();
+  worldVBO.Delete();
+  worldEBO.Delete();
   shaderProgram.Delete();
   glfwDestroyWindow(window);
   glfwTerminate();
