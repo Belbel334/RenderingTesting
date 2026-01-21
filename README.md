@@ -18,7 +18,9 @@ ___
 g++ src/main.cpp src/glad.c src/shaderClass.cpp src/VAO.cpp src/VBO.cpp src/EBO.cpp -Iinclude -Iheaders -IKHR $(pkg-config --cflags --libs glfw3) -lGL -ldl -lpthread -o out
 ```
 
-### .exe file [!Kinda weird]
+### .exe file
+> [!NOTE]
+> a bit weird
 
 ``` bash
 x86_64-w64-mingw32-g++ src/main.cpp src/glad.c src/shaderClass.cpp src/VAO.cpp src/VBO.cpp src/EBO.cpp -o out.exe \
