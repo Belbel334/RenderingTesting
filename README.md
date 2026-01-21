@@ -5,6 +5,7 @@
 - Out of bounds protection
 - Keyboard holding 
 - escape key to quit
+- kinda scuffed background
 
 
 ___

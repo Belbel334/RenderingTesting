@@ -42,6 +42,19 @@ GLuint indices[] = {
 
 };
 
+GLfloat terrainVerts[]={
+  //floor
+  -1.0f, -1.0f, 0.0f,
+  1.0f, -1.0f, 0.0f,
+  0.0f, -1.1f, 0.0f, //triangle but it doesnt matter because you dont see the bottom(unsure if this is neededd but safety)
+
+
+};
+GLuint terrainInds[]={
+  0,1,2,0 // floor triangle
+
+};
+
 const int WorldGridSize=50;
 const int vertCount = (WorldGridSize+1)*(WorldGridSize+1)*3;
 const int indCount=WorldGridSize*WorldGridSize*6;
@@ -55,8 +68,8 @@ void Genworld(){
 
   for(int row=0; row<=WorldGridSize; row++){
     for(int col=0; col<=WorldGridSize;col++){
-      worldVertices[vertexIndex+2]=-1.0f+col*Cellsize;
-      worldVertices[vertexIndex]=-1.0f+row*Cellsize;  
+      worldVertices[vertexIndex++]=(-1.0f+col)*Cellsize;
+      worldVertices[vertexIndex++]=(-1.0f+row)*Cellsize;  
 
       int White=(row+col)%2;
       worldVertices[vertexIndex++]=White ? 1.0f : 0.0f;
@@ -65,9 +78,9 @@ void Genworld(){
   int indexPos = 0;
   for (int row = 0; row < WorldGridSize; row++) {
     for (int col = 0; col < WorldGridSize; col++) {
-      int topLeft = row * (WorldGridSize + 1) + col;
+      int topLeft = (row * (WorldGridSize + 1) + col);
       int topRight = topLeft + 1;
-      int bottomLeft = (row + 1) * (WorldGridSize + 1) + col;
+      int bottomLeft = ((row + 1) * (WorldGridSize + 1) + col);
       int bottomRight = bottomLeft + 1;
       
       worldIndices[indexPos++] = topLeft;
@@ -172,6 +185,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
       }
     } else if (key == GLFW_KEY_S || key==GLFW_KEY_DOWN) {
       // Down movement if needed
+      for (int i = 0; i < 4; i++) {
+        ypositions[i] -= 0.05f;
+      }
     } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
@@ -183,7 +199,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
     }
     updatePos();
   } else if (action == GLFW_REPEAT) {
-    if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
+    if (key == GLFW_KEY_W || key == GLFW_KEY_SPACE || key == GLFW_KEY_UP) {
+      if(grounded){
+        Yvel = 0.03f;  // Simple upward velocity impulse
+      }
+    } else if (key == GLFW_KEY_A || key==GLFW_KEY_LEFT) {
       for (int i = 0; i < 4; i++) {
         xpositions[i] -= 0.05f;
       }
@@ -208,6 +228,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 
   GLFWwindow *window =
       glfwCreateWindow(800, 800, "Supertofspelletje", NULL, NULL);
