@@ -47,11 +47,21 @@ GLfloat terrainVerts[]={
   -1.0f, -1.0f, 0.0f,
   1.0f, -1.0f, 0.0f,
   0.0f, -1.1f, 0.0f, //triangle but it doesnt matter because you dont see the bottom(unsure if this is neededd but safety)
+  
+  -1.0f, -0.8f, 0.0f,
+  -0.7f, -0.8f, 0.0f,
+  -0.7f, -0.6f, 0.0f,
+  -1.0f, -0.6f, 0.0f, //small box
+
+
 
 
 };
 GLuint terrainInds[]={
-  0,1,2,0 // floor triangle
+  0,1,2,// floor triangle
+
+  3,4,5,
+  5,6,3,
 
 };
 
@@ -101,18 +111,29 @@ float bounciness = 0.5f;
 bool grounded = false;
 
 void updatePos() {
+  float oldXPositions[4], oldYPositions[4];
+  for(int i = 0; i < 4; i++) {
+    oldXPositions[i] = xpositions[i];
+    oldYPositions[i] = ypositions[i];
+  }
+  
+  //Out of bounds
   if (xpositions[0] >= 1.0f) {
     xpositions[0] = 1.0f;
     xpositions[1] = 0.8f;
     xpositions[2] = 1.0f;
     xpositions[3] = 0.8f;
   }
+  
+  // Out of bounds
   if (xpositions[1] <= -1.0f) {
     xpositions[0] = -0.8f;
     xpositions[1] = -1.0f;
     xpositions[2] = -0.8f;
     xpositions[3] = -1.0f;
   }
+  
+  // Out of bounds
   if (ypositions[0] <= -1.0f) {
     ypositions[0] = -1.0f;
     ypositions[1] = -1.0f;
@@ -126,29 +147,105 @@ void updatePos() {
       }
     }
   } else {
-    grounded=false;
+    grounded = false;
   }
+  
+  // Same old
   if (ypositions[2] >= 1.0f) {
     ypositions[0] = 0.8f;
     ypositions[1] = 0.8f;
     ypositions[2] = 1.0f;
     ypositions[3] = 1.0f;
-    if(Yvel>0){
-      Yvel=-Yvel*bounciness;
+    if(Yvel > 0) {
+      Yvel = -Yvel * bounciness;
     }
   }
+  
+  // BOX elements UPDATE to read array later in case of big maps
+  float boxLeft = -1.0f;
+  float boxRight = -0.7f;
+  float boxBottom = -0.8f;
+  float boxTop = -0.6f;
+  //for (blabe you know 0,3,6... wil be X pos, 1,4,7... will be Y pos)
+  //check for each Y pos take which one it did and overlap with that one?
+  //
+   bool overlapping = !(xpositions[0] < boxLeft ||   
+                       xpositions[1] > boxRight ||   
+                       ypositions[2] < boxBottom ||  
+                       ypositions[0] > boxTop);      
+  
+  if (overlapping) {
+    float overlapLeft = xpositions[0] - boxLeft;    
+    float overlapRight = boxRight - xpositions[1];  
+    float overlapBottom = ypositions[2] - boxBottom;
+    float overlapTop = boxTop - ypositions[0];      
+    
+    float minOverlap = overlapLeft;
+    int direction = 0; 
+    
+    if (overlapRight < minOverlap) {
+      minOverlap = overlapRight;
+      direction = 1;
+    }
+    if (overlapBottom < minOverlap) {
+      minOverlap = overlapBottom;
+      direction = 2;
+    }
+    if (overlapTop < minOverlap) {
+      minOverlap = overlapTop;
+      direction = 3;
+    }
+    
+    float playerWidth = xpositions[0] - xpositions[1];
+    float playerHeight = ypositions[2] - ypositions[0];
+    
+    switch(direction) {
+        xpositions[1] = boxLeft;
+        xpositions[0] = boxLeft + playerWidth;
+        xpositions[3] = boxLeft;
+        xpositions[2] = boxLeft + playerWidth;
+        break;
+      case 1:
+        xpositions[0] = boxRight;
+        xpositions[1] = boxRight - playerWidth;
+        xpositions[2] = boxRight;
+        xpositions[3] = boxRight - playerWidth;
+        break;
+      case 2: 
+        ypositions[2] = boxBottom;
+        ypositions[3] = boxBottom;
+        ypositions[0] = boxBottom - playerHeight;
+        ypositions[1] = boxBottom - playerHeight;
+        if (Yvel > 0) {
+          Yvel = -Yvel * bounciness;
+        }
+        break;
+      case 3: 
+        ypositions[0] = boxTop;
+        ypositions[1] = boxTop;
+        ypositions[2] = boxTop + playerHeight;
+        ypositions[3] = boxTop + playerHeight;
+        if (Yvel < 0) {
+          Yvel = -Yvel * bounciness;
+          if (abs(Yvel) < 0.001f) {
+            Yvel = 0.0f;
+            grounded = true;
+          }
+        }
+        break;
+    }
+  }
+  
   vertices[0] = xpositions[0];
   vertices[1] = ypositions[0];
-
   vertices[3] = xpositions[1];
   vertices[4] = ypositions[1];
-
   vertices[6] = xpositions[2];
   vertices[7] = ypositions[2];
-
   vertices[9] = xpositions[3];
   vertices[10] = ypositions[3];
 }
+
 void applyGravity() {
   // Apply gravity acceleration to velocity
   Yvel += g;
@@ -271,6 +368,15 @@ int main() {
   worldVAO.Unbind();
   worldVBO.Unbind();
   worldEBO.Unbind();
+
+  VAO terrainVAO;
+  terrainVAO.Bind();
+  VBO terrainVBO(terrainVerts, sizeof(terrainVerts));
+  EBO terrainEBO(terrainInds, sizeof(terrainInds));
+  terrainVAO.LinkVBO(terrainVBO,0);
+  terrainVAO.Unbind();
+  terrainVAO.Unbind();
+  terrainEBO.Unbind();
   cout << "color ID " << shaderProgram.ID << endl;
   GLuint colorLLoc = glGetUniformLocation(shaderProgram.ID, "colorL");
   while (!glfwWindowShouldClose(window)) {
@@ -287,6 +393,11 @@ int main() {
     VBO1.Bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
     VBO1.Unbind();
+
+    glUniform3f(colorLLoc, 0.9f, 0.9f, 0.9f);
+    terrainVAO.Bind();
+    glDrawElements(GL_TRIANGLES, 1000000, GL_UNSIGNED_INT, 0);
+    terrainVAO.Unbind();
 
     shaderProgram.Activate();
     glUniform3f(colorLLoc, colorL[0], colorL[1], colorL[2]);
@@ -306,6 +417,10 @@ int main() {
   worldVAO.Delete();
   worldVBO.Delete();
   worldEBO.Delete();
+  terrainVAO.Delete();
+  terrainVBO.Delete();
+  terrainEBO.Delete();
+
   shaderProgram.Delete();
   glfwDestroyWindow(window);
   glfwTerminate();
